@@ -8,6 +8,8 @@ public class Water : MonoBehaviour
     Color waterColor;
     [SerializeField]
     Color ambientLight;
+    [SerializeField]
+    Texture toonRamp;
 
     [SerializeField]
     float springConstant = 0.025f;
@@ -29,13 +31,12 @@ public class Water : MonoBehaviour
     Material rendererMat;
     
     Texture baseTex;
+    [System.NonSerialized]
+    public Texture2D sampleTexture;
 
     RenderTexture waterHeight;
     RenderTexture targetHeight;
-    RenderTexture waterForce;
-    RenderTexture targetForce;
     RenderTexture waterVisual;
-    RenderTexture targetVisual;
 
     Texture result;
 
@@ -46,21 +47,21 @@ public class Water : MonoBehaviour
         waterMat = new Material(waterShader);
         waterMat.SetColor("_Color", waterColor);
         waterMat.SetColor("_Ambient", ambientLight);
+        waterMat.SetTexture("_ToonRamp", toonRamp);
+
         waterMat.SetFloat("_SpringK", springConstant);
         waterMat.SetFloat("_Dampening", dampening);
         waterMat.SetFloat("_Spread", waveSpread);
 
         waterHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
         targetHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
-        waterForce = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.RGFloat, RenderTextureReadWrite.Linear);
-        targetForce = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.RGFloat, RenderTextureReadWrite.Linear);
         waterVisual = new RenderTexture(baseTex.width, baseTex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
-        targetVisual = new RenderTexture(baseTex.width, baseTex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
 
         Graphics.Blit(baseTex, waterHeight, waterMat, 0);
-        Graphics.Blit(baseTex, waterForce, waterMat, 1);
 
         rendererMat.mainTexture = waterVisual;
+
+        sampleTexture = new Texture2D(baseTex.width / 4, baseTex.height / 4);
     }
 
     void OnMouseDown()
@@ -82,34 +83,33 @@ public class Water : MonoBehaviour
         float scl = size / GetComponent<MeshRenderer>().bounds.size.x;
         waterMat.SetFloat("_DecalScale", scl);
 
-        Graphics.Blit(waterHeight, waterHeight, waterMat, 3);
+        Graphics.Blit(waterHeight, waterHeight, waterMat, 2);
     }
 	
 	void LateUpdate ()
     {
-        waterMat.SetFloat("_SpringK", springConstant);
-        waterMat.SetFloat("_Dampening", dampening);
-        waterMat.SetFloat("_Spread", waveSpread);
+        Graphics.Blit(waterHeight, targetHeight, waterMat, 0);
+        waterHeight.Release();
+        waterHeight = targetHeight;
+        targetHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 
         Graphics.Blit(waterHeight, targetHeight, waterMat, 0);
         waterHeight.Release();
         waterHeight = targetHeight;
         targetHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 
-        Graphics.Blit(waterForce, targetForce, waterMat, 1);
-        waterForce.Release();
-        waterForce = targetForce;
-        targetForce = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.RGFloat, RenderTextureReadWrite.Linear);
+        Graphics.Blit(waterHeight, waterVisual, waterMat, 1);
 
-
-        Graphics.Blit(waterHeight, waterVisual, waterMat, 2);
+        RenderTexture.active = waterHeight;
+        sampleTexture.ReadPixels(new Rect(0, 0, waterHeight.width, waterHeight.height), 0, 0);
+        sampleTexture.Apply();
     }
 
     void OnApplicationQuit()
     {
         DestroyImmediate(waterMat);
         waterHeight.Release();
-        waterForce.Release();
         waterVisual.Release();
+        targetHeight.Release();
     }
 }

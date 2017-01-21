@@ -5,6 +5,7 @@
 		_MainTex ("Sprite Texture", 2D) = "white" {}
 		_Color ("Tint", Color) = (1,1,1,1)
 		_Ambient ("Ambient Light", Color) = (0,0,0,1)
+		_ToonRamp ("Toon Ramp", 2D) = "white" {}
 
 		_LightDir ("Light Direction", Vector) = (-0.5, -1, 0.5, 1)
 
@@ -94,62 +95,11 @@
 				}
 
 				accel += -_SpringK * c.r;
-				c.g = c.g * _Dampening + accel * unity_DeltaTime;
-				c.r += c.g;
+				c.g = c.g * _Dampening + accel * unity_DeltaTime * 0.5;
+				c.r += c.g * unity_DeltaTime * 20;
 
 				c.rgb *= c.a;
 
-				return c;
-			}
-		ENDCG
-		}
-
-
-		//Water Forces Pass
-		Pass
-		{
-		CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma target 2.0
-			#include "UnityCG.cginc"
-			
-			struct appdata_t
-			{
-				float4 vertex   : POSITION;
-				float2 texcoord : TEXCOORD0;
-			};
-
-			struct v2f
-			{
-				float4 vertex   : SV_POSITION;
-				float2 texcoord  : TEXCOORD0;
-			};
-			
-
-			v2f vert(appdata_t v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.texcoord = v.texcoord;
-
-				return o;
-			}
-
-			sampler2D _MainTex;
-
-			fixed4 SampleSpriteTexture (float2 uv)
-			{
-				fixed4 color = tex2D (_MainTex, uv);
-				return color;
-			}
-
-			fixed4 _Color;
-
-			fixed4 frag(v2f i) : SV_Target
-			{
-				fixed4 c = SampleSpriteTexture(i.texcoord);
-				c.rgb = _Color * c.a;
 				return c;
 			}
 		ENDCG
@@ -191,6 +141,7 @@
 			float4 _MainTex_TexelSize;
 			float3 _LightDir;
 			float3 _Ambient;
+			sampler2D _ToonRamp;
 
 			fixed4 _Color;
 
@@ -223,9 +174,12 @@
 				float light = NdotL * 0.5 + 0.5;
 
 				float3 color = _Color;
-				float foam = pow(abs(c.g), 3);
-				foam = smoothstep(0.1, 0.3, foam);
+				float foam = pow(abs(c.g), 5);
+				foam = smoothstep(0.25, 0.5, foam);
 				color = lerp(color, float3(1,1,1), foam);
+
+				float2 rampUV = float2(light, 0);
+				light = tex2D(_ToonRamp, rampUV);
 
 				color = color * c.a;
 				color = lerp(_Ambient * color, color, light);
