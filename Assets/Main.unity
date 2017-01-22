@@ -1120,7 +1120,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Splash more balls into your goals than your opponent in 3 minutes
+  m_Text: Splash more balls into your goals than your opponent in 2 minutes
 --- !u!222 &473427705
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1576,7 +1576,7 @@ MonoBehaviour:
   goalSpawnDelay: 2
   ballSpawnDelay: 1
   maxBalls: 2
-  gameLength: 180
+  gameLength: 120
   HUD: {fileID: 1609174376}
   Results: {fileID: 1855884239}
 --- !u!1 &813659805
