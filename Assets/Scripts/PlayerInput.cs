@@ -20,4 +20,9 @@ public class PlayerInput : MonoBehaviour {
             targetPlayer.Splash();
         }
 	}
+
+    public void Reset()
+    {
+        targetPlayer.Reset();
+    }
 }

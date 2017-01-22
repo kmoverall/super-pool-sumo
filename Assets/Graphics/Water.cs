@@ -31,6 +31,8 @@ public class Water : MonoBehaviour
     RenderTexture targetHeight;
     RenderTexture waterVisual;
 
+    bool waitOneFrame = true;
+
 	void Awake () 
     {
         rendererMat = GetComponent<MeshRenderer>().material;
@@ -44,6 +46,18 @@ public class Water : MonoBehaviour
         waterMat.SetFloat("_Dampening", dampening);
         waterMat.SetFloat("_Spread", waveSpread);
 
+        ResetTextures();
+    }
+
+    public void ResetTextures()
+    {
+        if (waterHeight != null)
+            waterHeight.Release();
+        if (targetHeight != null)
+            targetHeight.Release();
+        if (waterVisual != null)
+            waterVisual.Release();
+
         waterHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
         targetHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
         waterVisual = new RenderTexture(baseTex.width, baseTex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
@@ -53,6 +67,8 @@ public class Water : MonoBehaviour
         rendererMat.mainTexture = waterVisual;
 
         sampleTexture = new Texture2D(baseTex.width / 4, baseTex.height / 4, TextureFormat.RGBAFloat, false, true);
+
+        waitOneFrame = true;
     }
 
     public void Splash(Texture splash, float power, Vector3 position, float size)
@@ -93,6 +109,11 @@ public class Water : MonoBehaviour
 
     void LateUpdate ()
     {
+        if (waitOneFrame)
+        {
+            waitOneFrame = false;
+            return;
+        }
         Graphics.Blit(waterHeight, targetHeight, waterMat, 0);
         waterHeight.Release();
         waterHeight = targetHeight;

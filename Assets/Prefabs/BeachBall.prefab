@@ -152,13 +152,13 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: c85471032a3808b47bc56e7cc5ca115c, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.8
+  m_Volume: 0.7
   m_Pitch: 1.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 130
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -250,12 +250,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sampleDistance: 0.04
-  forceMultiplier: 10
+  forceMultiplier: 8
   ballBob: 0.05
   particles:
   - {fileID: 198646742379286732}
   - {fileID: 198464725869364318}
   splash: {fileID: 198640139043272414, guid: ce1929cb31b45fb44b61fc0455146a5a, type: 2}
+  bounceSound: {fileID: 8300000, guid: e60519bf03342e046b13f85cb638bbf7, type: 3}
+  velocityVolumeScale: 8
 --- !u!198 &198464725869364318
 ParticleSystem:
   m_ObjectHideFlags: 1

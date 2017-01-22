@@ -27,23 +27,39 @@ public class GameManager : MonoBehaviour
     
     [SerializeField]
     int maxBalls = 2;
-    
-    public float timeRemaining = 180;
 
+    [SerializeField]
+    float gameLength = 180;
+    [System.NonSerialized]
+    public float timeRemaining;
 
-    void Start()
+    public RectTransform HUD;
+    public RectTransform Results;
+
+    public void Awake()
     {
-        StartGame();
+        timeRemaining = gameLength;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    void StartGame()
+    public void StartGame()
     {
+        StopAllCoroutines();
+
         SpawnGoal(0);
         SpawnGoal(1);
         for (int i = 0; i < maxBalls; i++)
         {
             SpawnBall();
         }
+
+        PlayerInput[] inputs = GetComponents<PlayerInput>();
+        foreach (PlayerInput i in inputs)
+        {
+            i.enabled = true;
+        }
+
         StartCoroutine(Timer());
     }
 
@@ -55,6 +71,8 @@ public class GameManager : MonoBehaviour
 
     bool SpawnGoal(int player)
     {
+        if (timeRemaining <= 0)
+            return false;
 
         bool validSpawn = false;
         float rot = 0;
@@ -95,6 +113,9 @@ public class GameManager : MonoBehaviour
 
     public bool SpawnBall()
     {
+        if (timeRemaining <= 0)
+            return false;
+
         Beachball ball = Instantiate(beachballPrefab);
 
         bool validSpawn = false;
@@ -141,12 +162,65 @@ public class GameManager : MonoBehaviour
         StartCoroutine(DelayedDestroy(ball.gameObject));
     }
 
+    public void StopPlay()
+    {
+        for (int i = 0; i < spawnedGoals.Count; i++)
+        {
+            spawnedGoals[i].GetComponentInChildren<Goal>().enabled = false;
+        }
+
+        PlayerInput[] inputs = GetComponents<PlayerInput>();
+        foreach (PlayerInput i in inputs)
+        {
+            i.enabled = false;
+        }
+
+        StartCoroutine(ShowResults(3));
+    }
+
+    IEnumerator ShowResults(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Results.GetComponent<Animator>().SetTrigger("Reset");
+        HUD.GetComponent<Animator>().SetTrigger("Close");
+    }
+
+    public void RestartGame()
+    {
+        for (int i = 0; i < spawnedGoals.Count; i++)
+        {
+            Destroy(spawnedGoals[i].gameObject);
+        }
+        spawnedGoals.Clear();
+
+        for (int i = 0; i < balls.Count; i++)
+        {
+            Destroy(balls[i].gameObject);
+        }
+        balls.Clear();
+
+        scores = new int[] { 0, 0 };
+        timeRemaining = gameLength;
+
+        PlayerInput[] players = GetComponents<PlayerInput>();
+        for (int i = 0; i < players.Length; i++)
+        {
+            players[i].Reset();
+        }
+
+        FindObjectOfType<Water>().ResetTextures();
+
+        HUD.GetComponent<Animator>().SetTrigger("Reset");
+    }
+
     IEnumerator DelayedBallSpawn()
     {
         bool spawned = false;
         while (!spawned)
         {
             yield return new WaitForSeconds(ballSpawnDelay);
+            if (timeRemaining <= 0)
+                yield break;
             spawned = SpawnBall();
         }
     }
@@ -157,6 +231,8 @@ public class GameManager : MonoBehaviour
         while (!spawned)
         {
             yield return new WaitForSeconds(goalSpawnDelay);
+            if (timeRemaining <= 0)
+                yield break;
             spawned = SpawnGoal(player);
         }
     }
@@ -169,10 +245,12 @@ public class GameManager : MonoBehaviour
 
     IEnumerator Timer()
     {
+        timeRemaining = gameLength;
         while (timeRemaining > 0)
         {
-            yield return null;
             timeRemaining -= Time.deltaTime;
+            yield return null;
         }
+        StopPlay();
     }
 }

@@ -30,8 +30,11 @@ public class Player : MonoBehaviour {
 
     Water pool;
 
+    Quaternion startRot;
+
     void Awake () {
         pool = FindObjectOfType<Water>();
+        startRot = transform.rotation;
 	}
 	
     public void Move(float xIn)
@@ -85,5 +88,10 @@ public class Player : MonoBehaviour {
         pos += head.transform.up * 0.4f;
 
         Instantiate(splash, pos, head.transform.rotation);
+    }
+
+    public void Reset()
+    {
+        transform.rotation = startRot;
     }
 }

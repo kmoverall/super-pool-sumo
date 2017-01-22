@@ -13,7 +13,7 @@ public class Scoreboard : MonoBehaviour {
 
     GameManager manager;
 
-	void Awake () {
+	void OnEnable () {
         manager = FindObjectOfType<GameManager>();
 	}
 	

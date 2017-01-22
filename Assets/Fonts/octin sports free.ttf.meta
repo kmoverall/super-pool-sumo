@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: f4c46f75aec276c4cbc288860da3d270
+timeCreated: 1485105775
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Octin Sports Free
+  fontNames:
+  - Octin Sports Free
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

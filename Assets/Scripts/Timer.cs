@@ -19,7 +19,7 @@ public class Timer : MonoBehaviour {
 
     bool timeIsRunning = true;
 
-	void Awake () 
+	void OnEnable() 
     {
         manager = FindObjectOfType<GameManager>();
 	}
@@ -51,9 +51,13 @@ public class Timer : MonoBehaviour {
             int seconds = Mathf.CeilToInt(time) % 60;
             t = minutes + ":" + seconds.ToString("00");
         }
-        else
+        else if (time > 0)
         {
             t = time.ToString("0.00");
+        }
+        else
+        {
+            t = "0.00";
         }
 
         GetComponent<Text>().text = t;

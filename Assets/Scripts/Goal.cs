@@ -31,6 +31,9 @@ public class Goal : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (!enabled)
+            return;
+
         manager.Score(this, other.GetComponent<Beachball>());
         GetComponent<Animator>().SetTrigger("Score");
         GetComponent<AudioSource>().Play();

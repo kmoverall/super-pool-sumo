@@ -16,6 +16,10 @@ public class Beachball : MonoBehaviour
     ParticleSystem[] particles;
     [SerializeField]
     ParticleSystem splash;
+    [SerializeField]
+    AudioClip bounceSound;
+    [SerializeField]
+    float velocityVolumeScale;
 
     bool waitOne = true;
 
@@ -43,6 +47,13 @@ public class Beachball : MonoBehaviour
         GetComponent<Rigidbody2D>().AddForce(force * forceMultiplier, ForceMode2D.Force);
     }
 
+    void OnCollisionEnter2D(Collision2D coll)
+    {
+        GetComponent<AudioSource>().pitch = Random.Range(0.8f, 1.2f);
+        float volume = coll.relativeVelocity.magnitude * velocityVolumeScale;
+        GetComponent<AudioSource>().PlayOneShot(bounceSound, volume);
+    }
+
     public void Score(int player)
     {
         GetComponent<Animator>().SetTrigger("Score");
@@ -52,7 +63,7 @@ public class Beachball : MonoBehaviour
     public void Splash()
     {
         Instantiate(splash, transform.position, Quaternion.identity);
-        GetComponent<AudioSource>().pitch = Random.Range(1.5f, 1.9f);
-        GetComponent<AudioSource>().Play();
+        GetComponent<AudioSource>().pitch = Random.Range(1.8f, 2.2f);
+        GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSource>().clip);
     }
 }
