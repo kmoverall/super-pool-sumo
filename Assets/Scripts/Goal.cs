@@ -33,6 +33,7 @@ public class Goal : MonoBehaviour {
     {
         manager.Score(this, other.GetComponent<Beachball>());
         GetComponent<Animator>().SetTrigger("Score");
+        GetComponent<AudioSource>().Play();
         other.GetComponent<Beachball>().Score(_player);
     }
 }

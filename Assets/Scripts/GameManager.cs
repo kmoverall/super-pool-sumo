@@ -27,9 +27,16 @@ public class GameManager : MonoBehaviour
     
     [SerializeField]
     int maxBalls = 2;
+    
+    public float timeRemaining = 180;
 
 
     void Start()
+    {
+        StartGame();
+    }
+
+    void StartGame()
     {
         SpawnGoal(0);
         SpawnGoal(1);
@@ -37,6 +44,7 @@ public class GameManager : MonoBehaviour
         {
             SpawnBall();
         }
+        StartCoroutine(Timer());
     }
 
     public void IncreaseBallCount()
@@ -157,5 +165,14 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1);
         Destroy(toDestroy.gameObject);
+    }
+
+    IEnumerator Timer()
+    {
+        while (timeRemaining > 0)
+        {
+            yield return null;
+            timeRemaining -= Time.deltaTime;
+        }
     }
 }

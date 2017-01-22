@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Beachball : MonoBehaviour {
+public class Beachball : MonoBehaviour
+{
 
     Water pool;
     [SerializeField]
@@ -13,13 +14,16 @@ public class Beachball : MonoBehaviour {
     float ballBob = 1;
     [SerializeField]
     ParticleSystem[] particles;
+    [SerializeField]
+    ParticleSystem splash;
 
     bool waitOne = true;
 
-    void Awake () {
+    void Awake()
+    {
         pool = FindObjectOfType<Water>();
-	}
-	
+    }
+
     void Update()
     {
         if (waitOne)
@@ -33,20 +37,22 @@ public class Beachball : MonoBehaviour {
         transform.localScale = new Vector3(scale, scale, scale);
     }
 
-	void FixedUpdate () {
+    void FixedUpdate()
+    {
         Vector2 force = pool.SampleWaterGradient(transform.position, sampleDistance);
         GetComponent<Rigidbody2D>().AddForce(force * forceMultiplier, ForceMode2D.Force);
-	}
+    }
 
     public void Score(int player)
     {
         GetComponent<Animator>().SetTrigger("Score");
         particles[player].Play();
-        GetComponent<AudioSource>().Play();
     }
 
-    public void PlaySound(AudioClip sound)
+    public void Splash()
     {
-        GetComponent<AudioSource>().PlayOneShot(sound);
+        Instantiate(splash, transform.position, Quaternion.identity);
+        GetComponent<AudioSource>().pitch = Random.Range(1.5f, 1.9f);
+        GetComponent<AudioSource>().Play();
     }
 }

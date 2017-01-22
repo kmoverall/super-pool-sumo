@@ -23,6 +23,9 @@ public class Player : MonoBehaviour {
     [SerializeField]
     Transform rightHand;
 
+    [SerializeField]
+    ParticleSystem splash;
+
     bool splashLeft = true;
 
     Water pool;
@@ -44,6 +47,8 @@ public class Player : MonoBehaviour {
         {
             head.localRotation = Quaternion.identity;
         }
+
+        GetComponent<Animator>().SetFloat("Speed", xIn);
     }
 
     public void Splash()
@@ -58,7 +63,27 @@ public class Player : MonoBehaviour {
         GetComponentInChildren<AudioSource>().pitch = splashPitch;
         GetComponentInChildren<AudioSource>().Play();
 
+        if (splashLeft)
+        {
+            GetComponent<Animator>().SetTrigger("SplashLeft");
+        }
+        else
+        {
+            GetComponent<Animator>().SetTrigger("SplashRight");
+        }
 
-       splashLeft = !splashLeft;
+
+        SplashParticles(splashLeft);
+
+        splashLeft = !splashLeft;
+    }
+
+    public void SplashParticles(bool isLeft)
+    {
+        Vector3 pos =  isLeft ? leftHand.position : rightHand.position;
+
+        pos += head.transform.up * 0.4f;
+
+        Instantiate(splash, pos, head.transform.rotation);
     }
 }

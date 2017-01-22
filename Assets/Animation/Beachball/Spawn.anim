@@ -342,10 +342,9 @@ AnimationClip:
   m_IsEmpty: 0
   m_Events:
   - time: 0.53333336
-    functionName: PlaySound
+    functionName: Splash
     data: 
-    objectReferenceParameter: {fileID: 8300000, guid: 3a3e184b7c635ee4a93a8719da598683,
-      type: 3}
+    objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
