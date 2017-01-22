@@ -13,6 +13,11 @@ public class PlayerInput : MonoBehaviour {
     Player targetPlayer;
 
 	void Update () {
-        targetPlayer.Move(Input.GetAxis(horizontalAxis));
+        targetPlayer.Move(Input.GetAxisRaw(horizontalAxis));
+        
+        if (Input.GetButtonUp(splashButton))
+        {
+            targetPlayer.Splash();
+        }
 	}
 }

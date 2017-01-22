@@ -31,14 +31,11 @@ public class Water : MonoBehaviour
     Material rendererMat;
     
     Texture baseTex;
-    [System.NonSerialized]
-    public Texture2D sampleTexture;
+    Texture2D sampleTexture;
 
     RenderTexture waterHeight;
     RenderTexture targetHeight;
     RenderTexture waterVisual;
-
-    Texture result;
 
 	void Awake () 
     {
@@ -61,7 +58,7 @@ public class Water : MonoBehaviour
 
         rendererMat.mainTexture = waterVisual;
 
-        sampleTexture = new Texture2D(baseTex.width / 4, baseTex.height / 4);
+        sampleTexture = new Texture2D(baseTex.width / 4, baseTex.height / 4, TextureFormat.RGBAFloat, false, true);
     }
 
     void OnMouseDown()
@@ -85,8 +82,28 @@ public class Water : MonoBehaviour
 
         Graphics.Blit(waterHeight, waterHeight, waterMat, 2);
     }
-	
-	void LateUpdate ()
+
+    public float SampleWater(Vector3 position)
+    {
+        Vector2 pos = Vector2.zero;
+        pos.x = (position.x - GetComponent<MeshRenderer>().bounds.min.x) / GetComponent<MeshRenderer>().bounds.size.x;
+        pos.y = (position.y - GetComponent<MeshRenderer>().bounds.min.y) / GetComponent<MeshRenderer>().bounds.size.y;
+
+        return sampleTexture.GetPixelBilinear(pos.x, pos.y).r;
+    }
+
+    public Vector2 SampleWaterGradient(Vector3 position, float dist)
+    {
+        Vector2 grad = Vector2.zero;
+        grad.x += SampleWater(position + new Vector3(dist, 0));
+        grad.x -= SampleWater(position + new Vector3(-dist, 0));
+        grad.y += SampleWater(position + new Vector3(0, dist));
+        grad.y -= SampleWater(position + new Vector3(0, -dist));
+
+        return grad;
+    }
+
+    void LateUpdate ()
     {
         Graphics.Blit(waterHeight, targetHeight, waterMat, 0);
         waterHeight.Release();
@@ -103,6 +120,7 @@ public class Water : MonoBehaviour
         RenderTexture.active = waterHeight;
         sampleTexture.ReadPixels(new Rect(0, 0, waterHeight.width, waterHeight.height), 0, 0);
         sampleTexture.Apply();
+        RenderTexture.active = null;
     }
 
     void OnApplicationQuit()
