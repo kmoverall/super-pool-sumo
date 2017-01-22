@@ -17,12 +17,6 @@ public class Water : MonoBehaviour
     float dampening = 0.025f;
     [SerializeField]
     float waveSpread = 0.5f;
-    [SerializeField]
-    float splashStrength = 0.1f;
-
-
-    [SerializeField]
-    Texture splashTex;
 
     [SerializeField]
     Shader waterShader;
@@ -59,12 +53,6 @@ public class Water : MonoBehaviour
         rendererMat.mainTexture = waterVisual;
 
         sampleTexture = new Texture2D(baseTex.width / 4, baseTex.height / 4, TextureFormat.RGBAFloat, false, true);
-    }
-
-    void OnMouseDown()
-    {
-        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Splash(splashTex, splashStrength, pos, 1f);
     }
 
     public void Splash(Texture splash, float power, Vector3 position, float size)

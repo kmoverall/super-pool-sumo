@@ -14,14 +14,14 @@ public class Goal : MonoBehaviour {
             GetComponent<SpriteRenderer>().sprite = sprites[player];
         }
     }
-    GoalSpawner manager;
+    GameManager manager;
 
     [SerializeField]
     Sprite[] sprites;
 
 	void Awake () 
     {
-        manager = FindObjectOfType<GoalSpawner>();
+        manager = FindObjectOfType<GameManager>();
 	}
 
     void Start()
@@ -31,7 +31,8 @@ public class Goal : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        manager.Score(this);
-        other.GetComponent<Animator>().SetTrigger("Score");
+        manager.Score(this, other.GetComponent<Beachball>());
+        GetComponent<Animator>().SetTrigger("Score");
+        other.GetComponent<Beachball>().Score(_player);
     }
 }

@@ -54,7 +54,11 @@ public class Player : MonoBehaviour {
         splashPoint += head.transform.up * 0.4f;
         pool.Splash(splashTex, splashStrength, splashPoint, splashSize);
 
+        float splashPitch = Random.Range(0.8f, 1.2f);
+        GetComponentInChildren<AudioSource>().pitch = splashPitch;
+        GetComponentInChildren<AudioSource>().Play();
 
-        splashLeft = !splashLeft;
+
+       splashLeft = !splashLeft;
     }
 }
