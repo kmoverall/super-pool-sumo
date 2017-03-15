@@ -28,7 +28,7 @@ public class Water : MonoBehaviour
     Texture2D sampleTexture;
 
     RenderTexture waterHeight;
-    RenderTexture targetHeight;
+    RenderTexture tmpHeight;
     RenderTexture waterVisual;
 
     bool waitOneFrame = true;
@@ -52,14 +52,12 @@ public class Water : MonoBehaviour
     public void ResetTextures()
     {
         if (waterHeight != null)
-            waterHeight.Release();
-        if (targetHeight != null)
-            targetHeight.Release();
+            RenderTexture.ReleaseTemporary(waterHeight);
         if (waterVisual != null)
             waterVisual.Release();
-
-        waterHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
-        targetHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+            
+        waterHeight = RenderTexture.GetTemporary(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
         waterVisual = new RenderTexture(baseTex.width, baseTex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
 
         Graphics.Blit(baseTex, waterHeight, waterMat, 0);
@@ -114,15 +112,16 @@ public class Water : MonoBehaviour
             waitOneFrame = false;
             return;
         }
-        Graphics.Blit(waterHeight, targetHeight, waterMat, 0);
-        waterHeight.Release();
-        waterHeight = targetHeight;
-        targetHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 
-        Graphics.Blit(waterHeight, targetHeight, waterMat, 0);
-        waterHeight.Release();
-        waterHeight = targetHeight;
-        targetHeight = new RenderTexture(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        Graphics.Blit(waterHeight, tmpHeight, waterMat, 0);
+        RenderTexture.ReleaseTemporary(waterHeight);
+        waterHeight = tmpHeight;
+        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+
+        Graphics.Blit(waterHeight, tmpHeight, waterMat, 0);
+        RenderTexture.ReleaseTemporary(waterHeight);
+        waterHeight = tmpHeight;
+        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 
         Graphics.Blit(waterHeight, waterVisual, waterMat, 1);
 
@@ -135,8 +134,8 @@ public class Water : MonoBehaviour
     void OnApplicationQuit()
     {
         DestroyImmediate(waterMat);
-        waterHeight.Release();
+        RenderTexture.ReleaseTemporary(waterHeight);
         waterVisual.Release();
-        targetHeight.Release();
+        RenderTexture.ReleaseTemporary(tmpHeight);
     }
 }
