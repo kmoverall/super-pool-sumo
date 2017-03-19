@@ -1,25 +1,41 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Rewired;
 
 public class PlayerInput : MonoBehaviour {
     [SerializeField]
-    string horizontalAxis;
-
-    [SerializeField]
-    string splashButton;
-
-    [SerializeField]
     Player targetPlayer;
 
+    [SerializeField]
+    int playerID = 0;
+    Rewired.Player rwPlayer;
+
+    void Awake()
+    {
+        rwPlayer = ReInput.players.GetPlayer(playerID);
+    }
+
 	void Update () {
-        targetPlayer.Move(Input.GetAxisRaw(horizontalAxis));
+        targetPlayer.Move(rwPlayer.GetAxis("Move"));
         
-        if (Input.GetButtonUp(splashButton))
+        if (rwPlayer.GetButtonDown("Splash Left"))
         {
-            targetPlayer.Splash();
+            targetPlayer.Splash(true);
         }
-	}
+        else if (rwPlayer.GetButtonDown("Splash Right"))
+        {
+            targetPlayer.Splash(false);
+        }
+
+        IEnumerable<ControllerPollingInfo> polls = ReInput.controllers.polling.PollAllControllersForAllButtons();
+        if (polls == null)
+            return;
+        foreach (ControllerPollingInfo p in polls)
+        {
+            Debug.Log(p.elementIdentifierId + " | " + p.elementIdentifierName);
+        }
+    }
 
     public void Reset()
     {
