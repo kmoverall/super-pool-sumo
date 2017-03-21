@@ -215,14 +215,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1172884938404688}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: -0, z: 0.7071068, w: -0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4586792781273072}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 270}
 --- !u!82 &82745385673014422
 AudioSource:
   m_ObjectHideFlags: 1
@@ -290,7 +290,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -331,8 +331,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdd893de57701c240ba4e14cf4e40105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 60
-  speedWhileSplashing: 30
+  speed: 90
+  speedWhileSplashing: 40
   splashTex: {fileID: 2800000, guid: 95ac0d74edee62845b6a3c4220c2bcf0, type: 3}
   splashSize: 1.5
   splashStrength: 5
@@ -348,7 +348,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1105551929688936}
   serializedVersion: 5
   lengthInSec: 0.5
-  speed: 1
+  simulationSpeed: 1
   looping: 0
   prewarm: 0
   playOnAwake: 0
@@ -2979,7 +2979,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1098115010864946}
   serializedVersion: 5
   lengthInSec: 0.5
-  speed: 1
+  simulationSpeed: 1
   looping: 0
   prewarm: 0
   playOnAwake: 0

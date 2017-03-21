@@ -56,15 +56,15 @@ public class Water : MonoBehaviour
         if (waterVisual != null)
             waterVisual.Release();
             
-        waterHeight = RenderTexture.GetTemporary(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
-        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        waterHeight = RenderTexture.GetTemporary(baseTex.width / 8, baseTex.height / 8, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 8, baseTex.height / 8, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
         waterVisual = new RenderTexture(baseTex.width, baseTex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
 
         Graphics.Blit(baseTex, waterHeight, waterMat, 0);
 
         rendererMat.mainTexture = waterVisual;
 
-        sampleTexture = new Texture2D(baseTex.width / 4, baseTex.height / 4, TextureFormat.RGBAFloat, false, true);
+        sampleTexture = new Texture2D(baseTex.width / 8, baseTex.height / 8, TextureFormat.RGBAFloat, false, true);
 
         waitOneFrame = true;
     }
@@ -116,12 +116,12 @@ public class Water : MonoBehaviour
         Graphics.Blit(waterHeight, tmpHeight, waterMat, 0);
         RenderTexture.ReleaseTemporary(waterHeight);
         waterHeight = tmpHeight;
-        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 8, baseTex.height / 8, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 
         Graphics.Blit(waterHeight, tmpHeight, waterMat, 0);
         RenderTexture.ReleaseTemporary(waterHeight);
         waterHeight = tmpHeight;
-        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 4, baseTex.height / 4, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 8, baseTex.height / 8, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 
         Graphics.Blit(waterHeight, waterVisual, waterMat, 1);
 

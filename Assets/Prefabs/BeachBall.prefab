@@ -257,7 +257,7 @@ MonoBehaviour:
   - {fileID: 198464725869364318}
   splash: {fileID: 198640139043272414, guid: ce1929cb31b45fb44b61fc0455146a5a, type: 2}
   bounceSound: {fileID: 8300000, guid: e60519bf03342e046b13f85cb638bbf7, type: 3}
-  velocityVolumeScale: 0.8
+  velocityVolumeScale: 0.5
 --- !u!198 &198464725869364318
 ParticleSystem:
   m_ObjectHideFlags: 1
