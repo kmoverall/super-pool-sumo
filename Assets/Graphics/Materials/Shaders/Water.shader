@@ -88,7 +88,7 @@
 				samples[2] = tex2D(_MainTex, i.uv + uvDist*float2(1, 0)); // R
 				samples[3] = tex2D(_MainTex, i.uv - uvDist*float2(0, 1)); // B
 				
-				for (int ii = 0; ii < 4; ii++)
+				/*for (int ii = 0; ii < 4; ii++)
 				{
 					if (samples[ii].a > 0)
 						accel += _Spread * (samples[ii].r - c.r);
@@ -98,7 +98,17 @@
 				c.g = c.g * _Dampening + accel * unity_DeltaTime * 0.5;
 				c.r += c.g * unity_DeltaTime * 20;
 
-				c.rgb *= c.a;
+				c.rgb *= c.a;*/
+
+				for (int ii = 0; ii < 4; ii++)
+				{
+					if (samples[ii].a > 0)
+						accel += _SpringK * (samples[ii].r - c.r) * _Spread;
+				}
+				accel += -_SpringK * c.r;
+				accel -= _Dampening * c.g;
+				c.r += c.g * unity_DeltaTime;
+				c.g += accel * unity_DeltaTime;
 
 				return c;
 			}
@@ -148,6 +158,8 @@
 			fixed4 frag(v2f i) : SV_Target
 			{
 				fixed4 c = tex2D(_MainTex, i.uv);
+				c.r = c.r * 0.5 + 0.5;
+				return fixed4(c.r,c.r,c.r,1);
 
 				float3 norm;
 				float3 lightDir = normalize(_LightDir);
@@ -170,6 +182,10 @@
 				float NdotV = dot(norm, float3(0,0,-1));
 				float3 R = reflect(lightDir, norm);
 				float spec = 0.5 * pow(dot(R, float3(0,0,-1)), 6);
+				if (NdotL <= 0)
+				{
+					spec = 0;
+				}
 
 				float light = NdotL * 0.5 + 0.5;
 
@@ -242,7 +258,7 @@
 				decalUV /= _DecalScale;
 				decalUV += 0.5;
 
-				c.g -= tex2D(_Decal, decalUV) * _SplashPow;
+				c.g = -1 * tex2D(_Decal, decalUV) * _SplashPow;
 
 				return c;
 			}

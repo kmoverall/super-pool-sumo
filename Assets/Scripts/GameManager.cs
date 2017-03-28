@@ -39,8 +39,8 @@ public class GameManager : MonoBehaviour
     public void Awake()
     {
         timeRemaining = gameLength;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
     }
 
     public void StartGame()

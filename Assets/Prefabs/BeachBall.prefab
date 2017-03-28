@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sampleDistance: 0.04
-  forceMultiplier: 8
+  forceMultiplier: 4
   ballBob: 0.05
   particles:
   - {fileID: 198646742379286732}

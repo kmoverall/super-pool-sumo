@@ -335,7 +335,7 @@ MonoBehaviour:
   speedWhileSplashing: 40
   splashTex: {fileID: 2800000, guid: 95ac0d74edee62845b6a3c4220c2bcf0, type: 3}
   splashSize: 1.5
-  splashStrength: 5
+  splashStrength: 4
   head: {fileID: 4586792781273072}
   leftHand: {fileID: 4465558009341336}
   rightHand: {fileID: 4101572116381848}

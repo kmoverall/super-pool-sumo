@@ -112,6 +112,9 @@ public class Water : MonoBehaviour
             waitOneFrame = false;
             return;
         }
+        waterMat.SetFloat("_SpringK", springConstant);
+        waterMat.SetFloat("_Dampening", dampening);
+        waterMat.SetFloat("_Spread", waveSpread);
 
         Graphics.Blit(waterHeight, tmpHeight, waterMat, 0);
         RenderTexture.ReleaseTemporary(waterHeight);

@@ -592,7 +592,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &269742488
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -916,9 +916,9 @@ MonoBehaviour:
   waterColor: {r: 0.15938579, g: 0.7118902, b: 0.9852941, a: 1}
   ambientLight: {r: 0.2225346, g: 0.23384146, b: 0.30882353, a: 1}
   toonRamp: {fileID: 2800000, guid: b73263d36cc40934fb837c90a2ba77a1, type: 3}
-  springConstant: 0.8
-  dampening: 0.997
-  waveSpread: 30
+  springConstant: 6
+  dampening: 0.8
+  waveSpread: 0.5
   waterShader: {fileID: 4800000, guid: 3daf79f472349b94c93627dc10e3d7d1, type: 3}
 --- !u!23 &363408377
 MeshRenderer:
@@ -2641,7 +2641,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
