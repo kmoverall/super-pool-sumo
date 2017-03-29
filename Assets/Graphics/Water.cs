@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Water : MonoBehaviour 
+public class Water : MonoBehaviour, IWater
 {
     [SerializeField]
     Color waterColor;
@@ -35,6 +35,7 @@ public class Water : MonoBehaviour
 
 	void Awake () 
     {
+        FindObjectOfType<GameManager>().pool = this;
         rendererMat = GetComponent<MeshRenderer>().material;
         baseTex = rendererMat.mainTexture;
         waterMat = new Material(waterShader);
@@ -46,10 +47,10 @@ public class Water : MonoBehaviour
         waterMat.SetFloat("_Dampening", dampening);
         waterMat.SetFloat("_Spread", waveSpread);
 
-        ResetTextures();
+        Reset();
     }
 
-    public void ResetTextures()
+    public void Reset()
     {
         if (waterHeight != null)
             RenderTexture.ReleaseTemporary(waterHeight);

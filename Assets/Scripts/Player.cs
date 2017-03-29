@@ -25,15 +25,19 @@ public class Player : MonoBehaviour {
 
     [SerializeField]
     ParticleSystem splash;
-
-    Water pool;
+    
+    IWater pool;
 
     Quaternion startRot;
 
-    void Awake () {
-        pool = FindObjectOfType<Water>();
+    void Awake () 
+    {
         startRot = transform.rotation;
 	}
+    void Start ()
+    {
+        pool = FindObjectOfType<GameManager>().pool;
+    }
 	
     public void Move(float xIn)
     {

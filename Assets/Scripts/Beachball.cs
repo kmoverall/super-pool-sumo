@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Beachball : MonoBehaviour
 {
 
-    Water pool;
+    IWater pool;
     [SerializeField]
     float sampleDistance = 0.2f;
     [SerializeField]
@@ -25,7 +25,7 @@ public class Beachball : MonoBehaviour
 
     void Awake()
     {
-        pool = FindObjectOfType<Water>();
+        pool = FindObjectOfType<GameManager>().pool;
     }
 
     void Update()

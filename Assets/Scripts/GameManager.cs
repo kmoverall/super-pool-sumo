@@ -36,9 +36,12 @@ public class GameManager : MonoBehaviour
     public RectTransform HUD;
     public RectTransform Results;
 
+    public IWater pool;
+
     public void Awake()
     {
         timeRemaining = gameLength;
+
         //Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
     }
@@ -208,7 +211,7 @@ public class GameManager : MonoBehaviour
             players[i].Reset();
         }
 
-        FindObjectOfType<Water>().ResetTextures();
+        pool.Reset();
 
         HUD.GetComponent<Animator>().SetTrigger("Reset");
     }
