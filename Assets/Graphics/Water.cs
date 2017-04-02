@@ -12,11 +12,15 @@ public class Water : MonoBehaviour, IWater
     Texture toonRamp;
 
     [SerializeField]
-    float springConstant = 0.025f;
+    float SpringConstant = 0.025f;
     [SerializeField]
-    float dampening = 0.025f;
+    float Dampening = 0.025f;
     [SerializeField]
-    float waveSpread = 0.5f;
+    float WaveSpread = 0.5f;
+    [SerializeField]
+    float WaterDeadZone = 0.0001f;
+    [SerializeField]
+    int PropagationPasses = 8;
 
     [SerializeField]
     Shader waterShader;
@@ -43,9 +47,10 @@ public class Water : MonoBehaviour, IWater
         waterMat.SetColor("_Ambient", ambientLight);
         waterMat.SetTexture("_ToonRamp", toonRamp);
 
-        waterMat.SetFloat("_SpringK", springConstant);
-        waterMat.SetFloat("_Dampening", dampening);
-        waterMat.SetFloat("_Spread", waveSpread);
+        waterMat.SetFloat("_SpringK", SpringConstant);
+        waterMat.SetFloat("_Dampening", Dampening);
+        waterMat.SetFloat("_Spread", WaveSpread);
+        waterMat.SetFloat("_DeadZone", WaterDeadZone);
 
         Reset();
     }
@@ -83,7 +88,7 @@ public class Water : MonoBehaviour, IWater
         float scl = size / GetComponent<MeshRenderer>().bounds.size.x;
         waterMat.SetFloat("_DecalScale", scl);
 
-        Graphics.Blit(waterHeight, waterHeight, waterMat, 2);
+        Graphics.Blit(waterHeight, waterHeight, waterMat, 3);
     }
 
     public float SampleWater(Vector3 position)
@@ -113,21 +118,24 @@ public class Water : MonoBehaviour, IWater
             waitOneFrame = false;
             return;
         }
-        waterMat.SetFloat("_SpringK", springConstant);
-        waterMat.SetFloat("_Dampening", dampening);
-        waterMat.SetFloat("_Spread", waveSpread);
+        waterMat.SetFloat("_SpringK", SpringConstant);
+        waterMat.SetFloat("_Dampening", Dampening);
+        waterMat.SetFloat("_Spread", WaveSpread);
 
         Graphics.Blit(waterHeight, tmpHeight, waterMat, 0);
         RenderTexture.ReleaseTemporary(waterHeight);
         waterHeight = tmpHeight;
         tmpHeight = RenderTexture.GetTemporary(baseTex.width / 8, baseTex.height / 8, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
 
-        Graphics.Blit(waterHeight, tmpHeight, waterMat, 0);
-        RenderTexture.ReleaseTemporary(waterHeight);
-        waterHeight = tmpHeight;
-        tmpHeight = RenderTexture.GetTemporary(baseTex.width / 8, baseTex.height / 8, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        for (int i = 0; i < PropagationPasses; i++)
+        {
+            Graphics.Blit(waterHeight, tmpHeight, waterMat, 1);
+            RenderTexture.ReleaseTemporary(waterHeight);
+            waterHeight = tmpHeight;
+            tmpHeight = RenderTexture.GetTemporary(baseTex.width / 8, baseTex.height / 8, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        }
 
-        Graphics.Blit(waterHeight, waterVisual, waterMat, 1);
+        Graphics.Blit(waterHeight, waterVisual, waterMat, 2);
 
         RenderTexture.active = waterHeight;
         sampleTexture.ReadPixels(new Rect(0, 0, waterHeight.width, waterHeight.height), 0, 0);

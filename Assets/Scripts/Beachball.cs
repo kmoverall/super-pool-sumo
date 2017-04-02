@@ -9,6 +9,8 @@ public class Beachball : MonoBehaviour
     [SerializeField]
     float sampleDistance = 0.2f;
     [SerializeField]
+    float forceExponent = 1;
+    [SerializeField]
     float forceMultiplier = 1;
     [SerializeField]
     float ballBob = 1;
@@ -44,6 +46,17 @@ public class Beachball : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 force = pool.SampleWaterGradient(transform.position, sampleDistance);
+
+        if (force.x >= 0)
+            force.x = Mathf.Pow(force.x, forceExponent);
+        else
+            force.x = -1 * Mathf.Pow(-force.x, forceExponent);
+
+        if (force.y >= 0)
+            force.y = Mathf.Pow(force.y, forceExponent);
+        else
+            force.y = -1 * Mathf.Pow(-force.y, forceExponent);
+
         GetComponent<Rigidbody2D>().AddForce(force * forceMultiplier, ForceMode2D.Force);
     }
 

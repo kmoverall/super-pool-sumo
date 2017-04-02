@@ -12,6 +12,7 @@
 		_SpringK ("Spring Constant", Float) = 0.025
 		_Dampening ("Dampening", Float) = 0.025
 		_Spread ("Spread", Float) = 0.5
+        _DeadZone ("Dead Zone", Float) = 0.0001
 
 		_Decal ("Decal Texture", 2D) = "black" {}
 		_SplashPow ("Splash Power", Float) = 1
@@ -57,6 +58,61 @@
 				float2 uv  : TEXCOORD0;
 			};
 			
+			v2f vert(appdata_t v)
+			{
+				v2f o;
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.uv = v.texcoord;
+
+				return o;
+			}
+
+			sampler2D _MainTex;
+
+			float _SpringK;
+			float _Dampening;
+            float _DeadZone;
+
+			float4 frag(v2f i) : SV_Target
+			{
+				float4 c = tex2D(_MainTex, i.uv);
+				if (c.a == 0)
+					return c;
+
+				c.b = 0;
+				c.b += -_SpringK * c.r;
+				c.b -= _Dampening * c.g;
+				c.r += c.g * unity_DeltaTime;
+				c.g += c.b * unity_DeltaTime;
+
+                c.r *= abs(c.r) >= _DeadZone;
+                c.g *= abs(c.g) >= _DeadZone;
+
+				return c;
+			}
+		ENDCG
+		}
+
+		//Water Spread Pass
+		Pass
+		{
+		CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma target 2.0
+			#include "UnityCG.cginc"
+			
+			struct appdata_t
+			{
+				float4 vertex   : POSITION;
+				float2 texcoord : TEXCOORD0;
+			};
+
+			struct v2f
+			{
+				float4 vertex   : SV_POSITION;
+				float2 uv  : TEXCOORD0;
+			};
 
 			v2f vert(appdata_t v)
 			{
@@ -70,17 +126,15 @@
 			sampler2D _MainTex;
 			uniform float4 _MainTex_TexelSize;
 
-			float _SpringK;
-			float _Dampening;
+
 			float _Spread;
+            float _DeadZone;			
 
 			float4 frag(v2f i) : SV_Target
 			{
 				float4 c = tex2D(_MainTex, i.uv);
 				if (c.a == 0)
 					return c;
-
-				float accel = 0;
 
 				float2 uvDist = _MainTex_TexelSize.xy;
 				float4 samples[4];
@@ -89,34 +143,23 @@
 				samples[1] = tex2D(_MainTex, i.uv - uvDist*float2(1, 0)); // L
 				samples[2] = tex2D(_MainTex, i.uv + uvDist*float2(1, 0)); // R
 				samples[3] = tex2D(_MainTex, i.uv - uvDist*float2(0, 1)); // B
-				
-				/*for (int ii = 0; ii < 4; ii++)
-				{
-					if (samples[ii].a > 0)
-						accel += _Spread * (samples[ii].r - c.r);
-				}
 
-				accel += -_SpringK * c.r;
-				c.g = c.g * _Dampening + accel * unity_DeltaTime * 0.5;
-				c.r += c.g * unity_DeltaTime * 20;
-
-				c.rgb *= c.a;*/
-
+				c.b = 0;
 				for (int ii = 0; ii < 4; ii++)
 				{
-					if (samples[ii].a > 0)
-						accel += _SpringK * (samples[ii].r - c.r) * _Spread;
+					if (samples[ii].a > 0.5)
+						c.b += (samples[ii].r - c.r) * _Spread;
 				}
-				accel += -_SpringK * c.r;
-				accel -= _Dampening * c.g;
-				c.r += c.g * unity_DeltaTime;
-				c.g += accel * unity_DeltaTime;
+				c.g += c.b * unity_DeltaTime;
+                c.r += c.b * unity_DeltaTime * unity_DeltaTime;
+
+                c.r *= abs(c.r) >= _DeadZone;
+                c.g *= abs(c.g) >= _DeadZone;
 
 				return c;
 			}
 		ENDCG
 		}
-
 
 		//Water Visual Pass
 		Pass
@@ -160,8 +203,6 @@
 			fixed4 frag(v2f i) : SV_Target
 			{
 				fixed4 c = tex2D(_MainTex, i.uv);
-				c.r = c.r * 0.5 + 0.5;
-				return fixed4(c.r,c.r,c.r,1);
 
 				float3 norm;
 				float3 lightDir = normalize(_LightDir);
@@ -192,8 +233,8 @@
 				float light = NdotL * 0.5 + 0.5;
 
 				float3 color = _Color;
-				float foam = pow(abs(c.g), 5);
-				foam = smoothstep(0.25, 0.5, foam);
+				float foam = pow(abs(c.b), 5);
+				foam = smoothstep(24, 25, foam);
 				color = lerp(color, float3(1,1,1), foam);
 
 				float2 rampUV = float2(light, 0);
