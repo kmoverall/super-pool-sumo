@@ -136,7 +136,10 @@ public class Water : MonoBehaviour, IWater
         }
 
         Graphics.Blit(waterHeight, waterVisual, waterMat, 2);
+    }
 
+    void OnRenderObject ()
+    {
         RenderTexture.active = waterHeight;
         sampleTexture.ReadPixels(new Rect(0, 0, waterHeight.width, waterHeight.height), 0, 0);
         sampleTexture.Apply();
