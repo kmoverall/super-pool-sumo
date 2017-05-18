@@ -18,7 +18,9 @@ public class PlayerInput : MonoBehaviour {
 
 	void Update () {
         targetPlayer.Move(rwPlayer.GetAxis("Move"));
-        
+
+        targetPlayer.GetComponent<Animator>().SetBool("SplashLeft", rwPlayer.GetButtonDown("Splash Left"));
+        targetPlayer.GetComponent<Animator>().SetBool("SplashRight", rwPlayer.GetButtonDown("Splash Right"));
         if (rwPlayer.GetButtonDown("Splash Left"))
         {
             targetPlayer.Splash(true);
@@ -28,13 +30,14 @@ public class PlayerInput : MonoBehaviour {
             targetPlayer.Splash(false);
         }
 
+        /*
         IEnumerable<ControllerPollingInfo> polls = ReInput.controllers.polling.PollAllControllersForAllButtons();
         if (polls == null)
             return;
         foreach (ControllerPollingInfo p in polls)
         {
             Debug.Log(p.elementIdentifierId + " | " + p.elementIdentifierName);
-        }
+        }*/
     }
 
     public void Reset()

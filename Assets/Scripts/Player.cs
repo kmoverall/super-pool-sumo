@@ -12,6 +12,8 @@ public class Player : MonoBehaviour {
     [SerializeField]
     Texture splashTex;
     [SerializeField]
+    Texture chargedSplashTex;
+    [SerializeField]
     float splashSize;
     [SerializeField]
     float splashStrength;
@@ -29,11 +31,15 @@ public class Player : MonoBehaviour {
     IWater pool;
 
     Quaternion startRot;
+    
+    [ReadOnly]
+    public float splashCharge = 0;
 
     void Awake () 
     {
         startRot = transform.rotation;
-	}
+        splashCharge = 0;
+    }
     void Start ()
     {
         pool = FindObjectOfType<GameManager>().pool;
@@ -73,23 +79,37 @@ public class Player : MonoBehaviour {
         float splashPitch = Random.Range(0.8f, 1.2f);
         GetComponentInChildren<AudioSource>().pitch = splashPitch;
         GetComponentInChildren<AudioSource>().PlayOneShot(GetComponentInChildren<AudioSource>().clip);
-
-        if (isLeft)
-        {
-            GetComponent<Animator>().SetTrigger("SplashLeft");
-        }
-        else
-        {
-            GetComponent<Animator>().SetTrigger("SplashRight");
-        }
-
-
+        
         SplashParticles(isLeft);
+    }
+
+    public void ChargedSplash()
+    {
+        Vector3 splashPoint = Vector3.zero;
+        splashPoint = (leftHand.position + rightHand.position) / 2;
+
+        splashPoint += head.transform.up * 0.4f;
+        pool.Splash(chargedSplashTex, splashStrength, splashPoint, splashSize);
+
+        float splashPitch = Random.Range(0.8f, 1.2f);
+        GetComponentInChildren<AudioSource>().pitch = splashPitch;
+        GetComponentInChildren<AudioSource>().PlayOneShot(GetComponentInChildren<AudioSource>().clip);
+
+        BigSplashParticles();
     }
 
     public void SplashParticles(bool isLeft)
     {
         Vector3 pos =  isLeft ? leftHand.position : rightHand.position;
+
+        pos += head.transform.up * 0.4f;
+
+        Instantiate(splash, pos, head.transform.rotation);
+    }
+
+    public void BigSplashParticles()
+    {
+        Vector3 pos = (leftHand.position + rightHand.position) / 2;
 
         pos += head.transform.up * 0.4f;
 
